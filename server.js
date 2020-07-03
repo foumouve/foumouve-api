@@ -1,4 +1,3 @@
-// process.env.MONGODB_URI
 let express = require('express')
 let path = require('path')
 let bodyParser = require('body-parser')
