@@ -26,10 +26,42 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, function (err, database) {
   console.log('Database connection ready')
 
   // Initialize the app.
-  let server = app.listen(process.env.PORT || 8080, function () {
+  let server = app.listen(process.env.PORT || 8080, () =>  {
     let port = server.address().port
     console.log('App now running on port', port)
   })
 })
 
 // MY API ROUTES BELOW
+
+// Generic error handler used by all endpoints.
+const handleError = (res, reason, message, code) => {
+  console.log('ERROR: ' + reason)
+  res.status(code || 500).json({'error': message})
+}
+  
+/*  '/users'
+*    GET: finds all users
+*    POST: creates a new user
+*/
+
+app.get('/users', function(req, res) {
+})
+
+app.post('/users', function(req, res) {
+})
+
+/*  '/users/:id'
+*    GET: find user by id
+*    PUT: update user by id
+*    DELETE: deletes user by id
+*/
+
+app.get('/users/:id', function(req, res) {
+})
+
+app.put('/users/:id', function(req, res) {
+})
+
+app.delete('/users/:id', function(req, res) {
+})
