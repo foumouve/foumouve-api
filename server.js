@@ -1,5 +1,6 @@
 let express = require('express')
-// let path = require('path')
+let path = require('path')
+const PORT = process.env.PORT || 8080
 let bodyParser = require('body-parser')
 let mongodb = require('mongodb')
 let ObjectID = mongodb.ObjectID
@@ -7,15 +8,20 @@ let ObjectID = mongodb.ObjectID
 let USERS_COLLECTION = 'users'
 
 let app = express()
-app.use(express.static(__dirname + '/public'))
+// app.use(express.static(__dirname + '/public'))
+app.use(express.static(path.join(__dirname, 'public')))
 app.use(bodyParser.json())
 
 // store db connection in global variable to reuse it
 let db
 
+let uri
+uri = process.env.MONGODB_URI
+console.log(uri)
+
 // connect db before startiong app
-mongodb.MongoClient.connect('mongodb+srv://admin:3irwHkcqCD3rXrjl@foumouve-cluster.egvk8.mongodb.net/foumove-api?retryWrites=true&w=majority', function (error, database) {
 // mongodb.MongoClient.connect(process.env.MONGODB_URI, function (error, database) {
+mongodb.MongoClient.connect(uri, function (error, database) {
   if (error) {
     console.log(error)
     process.exit(1)
@@ -25,7 +31,7 @@ mongodb.MongoClient.connect('mongodb+srv://admin:3irwHkcqCD3rXrjl@foumouve-clust
   console.log('Database connection ready')
 
   // app init
-  let server = app.listen(process.env.PORT || 8080, function () {
+  let server = app.listen(PORT, function () {
     let port = server.address().port
     console.log('App now running on port', port)
   })
