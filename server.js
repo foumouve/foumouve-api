@@ -64,7 +64,7 @@ app.post('/users', (req, res) => {
     let newContact = req.body
     newContact.createDate = new Date()
   
-    if (!(req.body.userName) || !(req.body.email) || !(req.body.password)) {
+    if (!(req.body.username) || !(req.body.email) || !(req.body.password)) {
       handleError(res, "Données de l'utilisateur Invalides.", "Le nom d'utilisateur, l'email et le mot de passe sont obligatoire!", 400)
     }
   
