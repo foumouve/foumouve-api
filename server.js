@@ -64,7 +64,7 @@ const handleError = function (result, reason, message, code) {
 *    POST: creates a new user
 */
 
-app.get('/users', function(request, result) {
+app.get('/contacts', function(request, result) {
     db.collection(USERS_COLLECTION).find({}).toArray(function(error, documents) {
       if (error) {
         handleError(result, error.message, "Failed to get contacts.")
@@ -74,7 +74,7 @@ app.get('/users', function(request, result) {
     })
 })
 
-app.post('/users', function(request, result) {
+app.post('/contacts', function(request, result) {
     let user = request.body
     // user.createDate = new Date()
 
@@ -97,7 +97,7 @@ app.post('/users', function(request, result) {
 *    DELETE: deletes user by id
 */
 
-app.get('/users/:id', function(request, result) {
+app.get('/contacts/:id', function(request, result) {
     db.collection(USERS_COLLECTION).findOne({ _id: new ObjectID(request.params.id) }, function(error, document) {
       if (error) {
         handleError(result, error.message, "Échec de la récupération de l'utilisateur.")
@@ -107,7 +107,7 @@ app.get('/users/:id', function(request, result) {
     })
 })
 
-app.put('/users/:id', function(request, result) {
+app.put('/contacts/:id', function(request, result) {
     let updateDocument = request.body
     delete updateDocument._id
   
@@ -120,7 +120,7 @@ app.put('/users/:id', function(request, result) {
     })
 })
 
-app.delete('/users/:id', function(request, result) {
+app.delete('/contacts/:id', function(request, result) {
     db.collection(USERS_COLLECTION)
     .deleteOne({_id: new ObjectID(request.params.id)}, function(error, result) {
       if (error) {
