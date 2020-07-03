@@ -14,8 +14,8 @@ app.use(bodyParser.json())
 let db
 
 // connect db before startiong app
+mongodb.MongoClient.connect('mongodb+srv://admin:3irwHkcqCD3rXrjl@foumouve-cluster.egvk8.mongodb.net/foumove-api?retryWrites=true&w=majority', function (error, database) {
 // mongodb.MongoClient.connect(process.env.MONGODB_URI, function (error, database) {
-mongodb.MongoClient.connect(process.env.MONGODB_URI, function (error, database) {
   if (error) {
     console.log(error)
     process.exit(1)
