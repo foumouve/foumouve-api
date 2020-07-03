@@ -2,8 +2,9 @@
   "name": "foumouve-api",
   "version": "1.0.0",
   "description": "An open source mobile application with custom healthy advice in eating (food) and training (move)",
-  "author": "foumove",
-  "license": "MIT",
+  "engines": {
+    "node": "12.x"
+  },
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -13,5 +14,7 @@
     "body-parser": "^1.13.3",
     "express": "^4.13.3",
     "mongodb": "^3.5.9"
-  }
+  },
+  "license": "MIT",
+  "author": "foumove"
 }
