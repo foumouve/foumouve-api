@@ -1,5 +1,5 @@
 let express = require('express')
-let path = require('path')
+// let path = require('path')
 let bodyParser = require('body-parser')
 let mongodb = require('mongodb')
 let ObjectID = mongodb.ObjectID
@@ -10,33 +10,33 @@ let app = express()
 app.use(express.static(__dirname + '/public'))
 app.use(bodyParser.json())
 
-// Create a database variable outside of the database connection callback to reuse the connection pool in your app.
+// store db connection in global variable to reuse it
 let db
 
-// Connect to the database before starting the application server.
-mongodb.MongoClient.connect(process.env.MONGODB_URI, function (err, database) {
-  if (err) {
-    console.log(err)
+// connect db before startiong app
+// mongodb.MongoClient.connect(process.env.MONGODB_URI, function (error, database) {
+mongodb.MongoClient.connect(process.env.MONGODB_URI, function (error, database) {
+  if (error) {
+    console.log(error)
     process.exit(1)
   }
-
-  // Save database object from the callback for reuse.
+  // store db object to reuse it
   db = database
   console.log('Database connection ready')
 
-  // Initialize the app.
+  // app init
   let server = app.listen(process.env.PORT || 8080, function () {
     let port = server.address().port
     console.log('App now running on port', port)
   })
 })
 
-// MY API ROUTES BELOW
+// API BELLOW //
 
-// Generic error handler used by all endpoints.
-const handleError = function (res, reason, message, code) {
+// error handler
+const handleError = function (result, reason, message, code) {
   console.log('ERROR: ' + reason)
-  res.status(code || 500).json({'error': message})
+  result.status(code || 500).json({'error': message})
 }
 
 // user template
@@ -57,25 +57,32 @@ const handleError = function (res, reason, message, code) {
 *    POST: creates a new user
 */
 
-app.get('/users', function(req, res) {
-})
-
-app.post('/users', (req, res) => {
-    let newContact = req.body
-    newContact.createDate = new Date()
-  
-    if (!(req.body.username) || !(req.body.email) || !(req.body.password)) {
-      handleError(res, "Données de l'utilisateur Invalides.", "Le nom d'utilisateur, l'email et le mot de passe sont obligatoire!", 400)
-    }
-  
-    db.collection(USERS_COLLECTION).insertOne(newContact, function(err, doc) {
-      if (err) {
-        handleError(res, err.message, 'Échec de la création de l\'utilisateur.')
+app.get('/users', function(request, result) {
+    db.collection(USERS_COLLECTION).find({}).toArray(function(error, documents) {
+      if (error) {
+        handleError(result, error.message, "Failed to get contacts.")
       } else {
-        res.status(201).json(doc.ops[0])
+        result.status(200).json(documents)
       }
     })
-  })
+})
+
+app.post('/users', function(request, result) {
+    let user = request.body
+    // user.createDate = new Date()
+
+    if (!(request.body.username) || !(request.body.email) || !(request.body.password)) {
+        handleError(result, "Données de l'utilisateur Invalides.", "Le nom d'utilisateur, l'email et le mot de passe sont obligatoire!", 400)
+    }
+
+    db.collection(USERS_COLLECTION).insertOne(user, function(error, document) {
+        if (error) {
+        handleError(result, error.message, "Échec de la création de l'utilisateur.")
+        } else {
+        res.status(201).json(document.ops[0])
+        }
+    })
+})
 
 /*  '/users/:id'
 *    GET: find user by id
@@ -83,11 +90,36 @@ app.post('/users', (req, res) => {
 *    DELETE: deletes user by id
 */
 
-app.get('/users/:id', function(req, res) {
+app.get('/users/:id', function(request, result) {
+    db.collection(USERS_COLLECTION).findOne({ _id: new ObjectID(request.params.id) }, function(error, document) {
+      if (error) {
+        handleError(result, error.message, "Échec de la récupération de l'utilisateur.")
+      } else {
+        result.status(200).json(document)
+      }
+    })
 })
 
-app.put('/users/:id', function(req, res) {
+app.put('/users/:id', function(request, result) {
+    let updateDocument = request.body
+    delete updateDocument._id
+  
+    db.collection(USERS_COLLECTION).updateOne({_id: new ObjectID(request.params.id)}, updateDocument, function(error, document) {
+      if (error) {
+        handleError(result, error.message, "Échec de la mise à jour de l'utilisateur.")
+      } else {
+        result.status(204).end()
+      }
+    })
 })
 
-app.delete('/users/:id', function(req, res) {
+app.delete('/users/:id', function(request, result) {
+    db.collection(USERS_COLLECTION)
+    .deleteOne({_id: new ObjectID(request.params.id)}, function(error, result) {
+      if (error) {
+        handleError(result, error.message, "Échec de la suppression de l'utilisateur.")
+      } else {
+        result.status(204).end()
+      }
+    })
 })
