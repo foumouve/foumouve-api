@@ -16,7 +16,8 @@ app.use(bodyParser.json())
 let db
 
 let uri
-uri = process.env.MONGODB_URI
+// uri = process.env.MONGODB_URI
+uri = "mongodb+srv://admin:3irwHkcqCD3rXrjl@foumouve-cluster.egvk8.mongodb.net/foumove-api?retryWrites=true&w=majority"
 console.log(uri)
 
 // connect db before startiong app
